@@ -94,3 +94,18 @@ model Contact {
 
   @@map("contacts") // Map model Contact ke tabel "contacts"
 }
+
+model Portfolio {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  imageUrl    String?
+  category    String
+  projectUrl  String?
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("portfolios") // Map model Portfolio ke tabel "portfolios"
+}
