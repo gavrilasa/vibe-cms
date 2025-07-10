@@ -1,10 +1,14 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -15,30 +19,30 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("users")
+  @@map("users") // Map model User ke tabel "users"
 }
 
 model Visitor {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   ipAddress String
   userAgent String?
   page      String
-  visitedAt DateTime @default(now())
+  visitedAt DateTime  @default(now())
 
-  @@map("visitors")
+  @@map("visitors") // Map model Visitor ke tabel "visitors"
 }
 
 model HeroContent {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   subtitle    String
   description String
   imageUrl    String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  @@map("hero_content")
+  @@map("hero_content") // Map model HeroContent ke tabel "hero_content"
 }
 
 model Service {
@@ -51,7 +55,7 @@ model Service {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@map("services")
+  @@map("services") // Map model Service ke tabel "services"
 }
 
 model TeamMember {
@@ -67,7 +71,7 @@ model TeamMember {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@map("team_members")
+  @@map("team_members") // Map model TeamMember ke tabel "team_members"
 }
 
 model Content {
@@ -79,5 +83,14 @@ model Content {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("content")
+  @@map("content") // Map model Content ke tabel "content"
+}
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("contacts") // Map model Contact ke tabel "contacts"
 }
