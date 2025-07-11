@@ -1,21 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // output: 'export', // Dihapus atau dikomentari
   eslint: {
     ignoreDuringBuilds: true,
   },
-  images: {
-    // Konfigurasi ini mengizinkan Next.js untuk memuat gambar dari domain mana pun.
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-      {
-        protocol: 'http',
-        hostname: '**',
-      },
-    ],
-  },
+  images: { unoptimized: true },
 };
 
 module.exports = nextConfig;
