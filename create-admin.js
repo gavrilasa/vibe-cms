@@ -35,7 +35,7 @@ async function createAdmin(email, password, name = null) {
       data: {
         email: email.toLowerCase().trim(),
         password: hashedPassword,
-        role: 'admin'
+        role: 'ADMIN'
       }
     });
     
@@ -60,7 +60,7 @@ async function listAdmins() {
     await prisma.$connect();
     
     const admins = await prisma.user.findMany({
-      where: { role: 'admin' },
+      where: { role: 'ADMIN' },
       select: {
         id: true,
         email: true,

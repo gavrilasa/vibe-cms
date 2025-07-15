@@ -167,14 +167,14 @@ export default function AdminDashboard() {
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Dashboard Overview</h2>
                 <p className="text-gray-600">
                   Welcome to your admin dashboard. Here you can manage your website content, 
-                  view visitor statistics, and update your team information.
+                  view visitor statistics, and manage employees.
                 </p>
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
-                    onClick={() => setActiveTab('content')}
+                    onClick={() => router.push('/admin/employees')}
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Manage Content
+                    Manage Employees
                   </button>
                   <button
                     onClick={() => window.location.href = '/'}
@@ -190,7 +190,7 @@ export default function AdminDashboard() {
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Content Management</h2>
                 <p className="text-gray-600 mb-6">
-                  Manage your website content including hero section, services, and team members.
+                  Manage your website content including hero section, services, and portfolio.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <button
@@ -206,18 +206,12 @@ export default function AdminDashboard() {
                     Manage Services
                   </button>
                   <button
-                    onClick={() => router.push('/admin/team')}
-                    className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                    onClick={() => router.push('/admin/portfolio')}
+                    className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
                   >
-                    Manage Team
+                    Manage Portfolio
                   </button>
                 </div>
-                <button
-                  onClick={() => router.push('/admin/portfolio')}
-                  className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
-                >
-                  Manage Portfolio
-                </button>
               </div>
             )}
           </div>

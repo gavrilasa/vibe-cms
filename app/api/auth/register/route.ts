@@ -104,14 +104,14 @@ export async function POST(request: NextRequest) {
       data: {
         email: email.toLowerCase().trim(),
         password: hashedPassword,
-        role: 'admin',
+        role: 'EMPLOYEE',
       },
     });
 
     console.log('User created successfully:', { id: user.id, email: user.email });
 
     return NextResponse.json({ 
-      message: 'Admin user created successfully',
+      message: 'Employee user created successfully',
       user: { 
         id: user.id, 
         email: user.email, 

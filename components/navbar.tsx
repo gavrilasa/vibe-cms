@@ -44,9 +44,6 @@ export function Navbar() {
               <Link href="#about" className="text-gray-700 hover:text-red-600 px-3 py-2 text-sm font-medium transition-colors duration-300">
                 About
               </Link>
-              <Link href="#team" className="text-gray-700 hover:text-red-600 px-3 py-2 text-sm font-medium transition-colors duration-300">
-                Team
-              </Link>
               <Link href="#contact" className="text-gray-700 hover:text-red-600 px-3 py-2 text-sm font-medium transition-colors duration-300">
                 Contact
               </Link>
@@ -81,9 +78,6 @@ export function Navbar() {
             </Link>
             <Link href="#about" className="text-gray-700 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium transition-colors">
               About
-            </Link>
-            <Link href="#team" className="text-gray-700 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium transition-colors">
-              Team
             </Link>
             <Link href="#contact" className="text-gray-700 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium transition-colors">
               Contact

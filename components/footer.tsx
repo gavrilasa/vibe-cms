@@ -80,11 +80,6 @@ export function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="#team" className="text-gray-300 hover:text-red-600 transition-colors duration-300">
-                    Our Team
-                  </a>
-                </li>
-                <li>
                   <a href="#contact" className="text-gray-300 hover:text-red-600 transition-colors duration-300">
                     Contact Us
                   </a>

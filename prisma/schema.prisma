@@ -5,23 +5,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// prisma/schema.prisma
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
-
-directUrl = env("DATABASE_URL_UNPOOLED")
-
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String
-  role      String   @default("admin")
+  role      Role     @default(EMPLOYEE)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("users") // Map model User ke tabel "users"
+  @@map("users")
 }
 
 model Visitor {
@@ -31,7 +28,7 @@ model Visitor {
   page      String
   visitedAt DateTime  @default(now())
 
-  @@map("visitors") // Map model Visitor ke tabel "visitors"
+  @@map("visitors")
 }
 
 model HeroContent {
@@ -44,7 +41,7 @@ model HeroContent {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  @@map("hero_content") // Map model HeroContent ke tabel "hero_content"
+  @@map("hero_content")
 }
 
 model Service {
@@ -57,44 +54,7 @@ model Service {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@map("services") // Map model Service ke tabel "services"
-}
-
-model TeamMember {
-  id          String   @id @default(cuid())
-  name        String
-  position    String
-  description String
-  imageUrl    String?
-  email       String?
-  linkedin    String?
-  isActive    Boolean  @default(true)
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("team_members") // Map model TeamMember ke tabel "team_members"
-}
-
-model Content {
-  id        String   @id @default(cuid())
-  section   String   @unique
-  title     String
-  content   String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("content") // Map model Content ke tabel "content"
-}
-model Contact {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  message   String
-  createdAt DateTime @default(now())
-
-  @@map("contacts") // Map model Contact ke tabel "contacts"
+  @@map("services")
 }
 
 model Portfolio {
@@ -109,5 +69,20 @@ model Portfolio {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@map("portfolios") // Map model Portfolio ke tabel "portfolios"
+  @@map("portfolios")
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("contacts")
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
 }
