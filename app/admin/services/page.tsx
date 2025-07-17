@@ -1,9 +1,8 @@
-// app/admin/portfolio/page.tsx
+// app/admin/services/page.tsx
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
 	ArrowLeft,
 	Plus,
@@ -11,7 +10,6 @@ import {
 	Trash2,
 	Loader2,
 	AlertCircle,
-	Image as ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,27 +25,27 @@ import {
 	DialogClose,
 } from "@/components/ui/dialog";
 import {
-	getPortfolioItems,
-	createPortfolioItem,
-	updatePortfolioItem,
-	deletePortfolioItem,
-} from "@/features/portfolio/lib/actions";
+	getServices,
+	createService,
+	updateService,
+	deleteService,
+} from "@/features/services/lib/actions";
 
 // This interface must match the prisma model
-interface PortfolioItem {
+interface Service {
 	id: string;
 	title: string;
 	description: string;
-	category: string;
-	imageUrl: string | null;
+	icon: string;
 	order: number;
+	isActive: boolean;
 	createdAt: Date;
 	updatedAt: Date;
 }
 
-export default function ManagePortfolio() {
+export default function ManageServices() {
 	const router = useRouter();
-	const [items, setItems] = useState<PortfolioItem[]>([]);
+	const [services, setServices] = useState<Service[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -55,40 +53,37 @@ export default function ManagePortfolio() {
 	// State for the form dialog
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
-	const [currentItem, setCurrentItem] = useState<Partial<PortfolioItem>>({});
+	const [currentService, setCurrentService] = useState<Partial<Service>>({});
 
 	useEffect(() => {
-		const loadItems = async () => {
+		const loadServices = async () => {
 			try {
 				setIsLoading(true);
-				const itemsData = await getPortfolioItems();
-				setItems(itemsData);
+				const servicesData = await getServices();
+				setServices(servicesData);
 			} catch (err) {
-				setError(
-					"Failed to load portfolio items. Please try refreshing the page."
-				);
+				setError("Failed to load services. Please try refreshing the page.");
 			} finally {
 				setIsLoading(false);
 			}
 		};
-		loadItems();
+		loadServices();
 	}, []);
 
 	const openNewDialog = () => {
 		setIsEditing(false);
-		setCurrentItem({
+		setCurrentService({
 			title: "",
 			description: "",
-			category: "",
-			imageUrl: "",
-			order: items.length + 1,
+			icon: "",
+			order: services.length + 1,
 		});
 		setIsDialogOpen(true);
 	};
 
-	const openEditDialog = (item: PortfolioItem) => {
+	const openEditDialog = (service: Service) => {
 		setIsEditing(true);
-		setCurrentItem(item);
+		setCurrentService(service);
 		setIsDialogOpen(true);
 	};
 
@@ -98,7 +93,7 @@ export default function ManagePortfolio() {
 		setError(null);
 
 		const formData = new FormData(event.currentTarget);
-		const action = isEditing ? updatePortfolioItem : createPortfolioItem;
+		const action = isEditing ? updateService : createService;
 
 		try {
 			const result = await action(formData);
@@ -106,8 +101,9 @@ export default function ManagePortfolio() {
 				setError(result.message);
 			} else {
 				setIsDialogOpen(false);
-				const updatedItems = await getPortfolioItems();
-				setItems(updatedItems);
+				// Manually refresh data after submission
+				const updatedServices = await getServices();
+				setServices(updatedServices);
 			}
 		} catch (err) {
 			setError(
@@ -119,17 +115,18 @@ export default function ManagePortfolio() {
 	};
 
 	const handleDelete = async (id: string) => {
-		if (!confirm("Are you sure you want to delete this item?")) {
+		if (!confirm("Are you sure you want to delete this service?")) {
 			return;
 		}
 
 		try {
-			const result = await deletePortfolioItem(id);
+			const result = await deleteService(id);
 			if (result?.message) {
 				setError(result.message);
 			} else {
-				const updatedItems = await getPortfolioItems();
-				setItems(updatedItems);
+				// Manually refresh data after deletion
+				const updatedServices = await getServices();
+				setServices(updatedServices);
 			}
 		} catch (err) {
 			setError(
@@ -159,9 +156,9 @@ export default function ManagePortfolio() {
 
 			<Card>
 				<CardHeader className="flex flex-row items-center justify-between">
-					<CardTitle>Manage Portfolio</CardTitle>
+					<CardTitle>Manage Services</CardTitle>
 					<Button onClick={openNewDialog}>
-						<Plus className="mr-2 h-4 w-4" /> Add New Item
+						<Plus className="mr-2 h-4 w-4" /> Add New Service
 					</Button>
 				</CardHeader>
 				<CardContent>
@@ -171,56 +168,45 @@ export default function ManagePortfolio() {
 							<span>{error}</span>
 						</div>
 					)}
-					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-						{items.map((item) => (
-							<Card key={item.id} className="flex flex-col">
-								<CardHeader>
-									<div className="relative h-40 w-full overflow-hidden rounded-t-lg bg-muted">
-										{item.imageUrl ? (
-											<Image
-												src={item.imageUrl}
-												alt={item.title}
-												layout="fill"
-												objectFit="cover"
-											/>
-										) : (
-											<div className="flex h-full items-center justify-center">
-												<ImageIcon className="h-12 w-12 text-muted-foreground" />
-											</div>
-										)}
-									</div>
-								</CardHeader>
-								<CardContent className="flex flex-1 flex-col justify-between">
-									<div>
-										<h3 className="font-bold">{item.title}</h3>
-										<p className="text-sm text-muted-foreground">
-											{item.category}
-										</p>
-										<p className="mt-2 text-sm">{item.description}</p>
-									</div>
-									<div className="mt-4 flex items-center justify-end gap-2">
-										<Button
-											variant="outline"
-											size="sm"
-											onClick={() => openEditDialog(item)}
-										>
-											<Edit className="h-4 w-4" />
-										</Button>
-										<Button
-											variant="destructive"
-											size="sm"
-											onClick={() => handleDelete(item.id)}
-										>
-											<Trash2 className="h-4 w-4" />
-										</Button>
-									</div>
-								</CardContent>
-							</Card>
+					<div className="space-y-4">
+						{services.map((service) => (
+							<div
+								key={service.id}
+								className="flex items-center justify-between rounded-lg border p-4"
+							>
+								<div>
+									<h3 className="font-semibold">
+										{service.order}. {service.title}
+									</h3>
+									<p className="text-sm text-muted-foreground">
+										{service.description}
+									</p>
+									<p className="text-xs text-muted-foreground">
+										Icon: {service.icon}
+									</p>
+								</div>
+								<div className="flex items-center gap-2">
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() => openEditDialog(service)}
+									>
+										<Edit className="h-4 w-4" />
+									</Button>
+									<Button
+										variant="destructive"
+										size="sm"
+										onClick={() => handleDelete(service.id)}
+									>
+										<Trash2 className="h-4 w-4" />
+									</Button>
+								</div>
+							</div>
 						))}
 					</div>
-					{items.length === 0 && !isLoading && (
+					{services.length === 0 && !isLoading && (
 						<p className="py-8 text-center text-muted-foreground">
-							No portfolio items found. Click "Add New Item" to begin.
+							No services found. Click "Add New Service" to begin.
 						</p>
 					)}
 				</CardContent>
@@ -230,12 +216,17 @@ export default function ManagePortfolio() {
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>
-							{isEditing ? "Edit Portfolio Item" : "Add New Item"}
+							{isEditing ? "Edit Service" : "Add New Service"}
 						</DialogTitle>
+						<DialogDescription>
+							{isEditing
+								? "Update the details of your service."
+								: "Fill in the details for the new service."}
+						</DialogDescription>
 					</DialogHeader>
 					<form onSubmit={handleFormSubmit} className="space-y-4">
 						{isEditing && (
-							<input type="hidden" name="id" value={currentItem.id} />
+							<input type="hidden" name="id" value={currentService.id} />
 						)}
 						<div>
 							<label htmlFor="title" className="mb-2 block text-sm font-medium">
@@ -244,7 +235,7 @@ export default function ManagePortfolio() {
 							<Input
 								id="title"
 								name="title"
-								defaultValue={currentItem.title}
+								defaultValue={currentService.title}
 								required
 							/>
 						</div>
@@ -258,37 +249,20 @@ export default function ManagePortfolio() {
 							<Textarea
 								id="description"
 								name="description"
-								defaultValue={currentItem.description}
+								defaultValue={currentService.description}
 								required
 							/>
 						</div>
 						<div>
-							<label
-								htmlFor="category"
-								className="mb-2 block text-sm font-medium"
-							>
-								Category
+							<label htmlFor="icon" className="mb-2 block text-sm font-medium">
+								Icon Name
 							</label>
 							<Input
-								id="category"
-								name="category"
-								defaultValue={currentItem.category}
+								id="icon"
+								name="icon"
+								defaultValue={currentService.icon}
+								placeholder="e.g., 'Code'"
 								required
-							/>
-						</div>
-						<div>
-							<label
-								htmlFor="imageUrl"
-								className="mb-2 block text-sm font-medium"
-							>
-								Image URL
-							</label>
-							<Input
-								id="imageUrl"
-								name="imageUrl"
-								type="url"
-								defaultValue={currentItem.imageUrl ?? ""}
-								placeholder="https://example.com/image.png"
 							/>
 						</div>
 						<div>
@@ -299,7 +273,7 @@ export default function ManagePortfolio() {
 								id="order"
 								name="order"
 								type="number"
-								defaultValue={currentItem.order}
+								defaultValue={currentService.order}
 								required
 							/>
 						</div>
@@ -313,7 +287,7 @@ export default function ManagePortfolio() {
 								{isSubmitting ? (
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 								) : null}
-								{isEditing ? "Save Changes" : "Create Item"}
+								{isEditing ? "Save Changes" : "Create Service"}
 							</Button>
 						</DialogFooter>
 					</form>
